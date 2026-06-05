@@ -359,8 +359,8 @@ function updateConnectionUI(connected) {
       elLiveMonitorValue.style.textShadow = '0 0 5px rgba(0, 240, 255, 0.3)';
     } else {
       elLiveMonitorValue.textContent = 'OFFLINE';
-      elLiveMonitorValue.style.color = '#ef4444';
-      elLiveMonitorValue.style.textShadow = '0 0 5px rgba(239, 68, 68, 0.3)';
+      elLiveMonitorValue.style.color = '#ffffff';
+      elLiveMonitorValue.style.textShadow = 'none';
     }
   }
 }
