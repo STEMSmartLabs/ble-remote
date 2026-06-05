@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="STEM Smart Labs - Premium Web Bluetooth controller for micro:bit and Calliope robots. Static, zero-dependency, open-source gamepad PWA.">
+  <title>STEM Smart Labs // Micro:bit Robot Controller</title>
+  
+  <link rel="stylesheet" href="styles.css">
+  
+  <!-- Inline SVG Library for High Performance Loading -->
+  <svg style="display: none;">
+    <!-- Bluetooth Icon -->
+    <g id="icon-bluetooth">
+      <path stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" d="M7 7l10 10-5 5V2l5 5L7 17"/>
+    </g>
+    <!-- D-Pad Directional Arrow -->
+    <g id="icon-arrow">
+      <path fill="currentColor" d="M12 4l-8 8h6v8h4v-8h6z"/>
+    </g>
+    <!-- Joystick Grid Icon -->
+    <g id="icon-joystick">
+      <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>
+      <circle cx="12" cy="12" r="3" fill="currentColor"/>
+      <path stroke="currentColor" stroke-width="2" d="M12 2v4M12 18v4M2 12h4M18 12h4"/>
+    </g>
+    <!-- Sliders Icon -->
+    <g id="icon-sliders">
+      <path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 12h6"/>
+    </g>
+    <!-- Tilt Icon -->
+    <g id="icon-tilt">
+      <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>
+      <circle cx="12" cy="12" r="2" fill="currentColor"/>
+      <path stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M7 12h3M14 12h3M12 7v2M12 15v2"/>
+    </g>
+    <!-- Terminal Icon -->
+    <g id="icon-terminal">
+      <path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M4 17l6-6-6-6M12 19h8"/>
+    </g>
+    <!-- Help / Book Icon -->
+    <g id="icon-help">
+      <path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
+      <path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/>
+    </g>
+    <!-- Info Icon -->
+    <g id="icon-info">
+      <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>
+      <path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 16v-4M12 8h.01"/>
+    </g>
+  </svg>
+</head>
+<body>
+
+  <!-- BLE Warning Banner -->
+  <div id="ble-warning-banner" class="warning-banner" style="display: none;">
+    <span class="warning-icon">⚠️</span>
+    <div class="warning-text">
+      <strong>Web Bluetooth is unsupported or restricted here.</strong>
+      <span>To pair, please use Chrome (Android/Desktop) or Bluefy (iOS) over HTTPS or localhost.</span>
+    </div>
+  </div>
+
+  <!-- App Header Bar -->
+  <header>
+    <div class="brand-container">
+      <!-- STEM Smart Labs Logo -->
+      <img class="brand-logo" src="https://shop.stemsmartlabs.com/wp-content/uploads/2021/09/STEM_Smart_Labs_Logo-1.png" alt="STEM Smart Labs Logo">
+      <div class="brand-meta">
+        <span class="brand-name">STEM Smart Labs</span>
+        <span class="brand-tagline">Bluetooth Controller Hub</span>
+      </div>
+    </div>
+    
+    <div class="connection-area">
+      <!-- Help Modal Button -->
+      <button class="btn btn-danger" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1;" id="btn-show-help">
+        <svg width="16" height="16" style="vertical-align:middle; margin-right:4px;"><use href="#icon-help"/></svg>
+        Guide
+      </button>
+
+      <!-- Console Toggle Button -->
+      <button class="btn btn-danger btn-console-toggle" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1;" id="btn-toggle-console">
+        <svg width="16" height="16" style="vertical-align:middle; margin-right:4px;"><use href="#icon-terminal"/></svg>
+        Console
+      </button>
+      
+      <!-- Connection Status Badge -->
+      <div id="status-badge" class="status-badge disconnected">
+        <span class="status-dot"></span>
+        <span id="status-text">Offline</span>
+      </div>
+      
+      <!-- Connect Trigger -->
+      <button id="connect-btn" class="btn btn-primary">
+        <svg width="16" height="16" fill="none" style="vertical-align:middle; margin-right:2px;"><use href="#icon-bluetooth"/></svg>
+        Pair Micro:bit
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Interactive Section -->
+  <main class="app-container">
+    
+    <!-- Left Hand Side: Control Stages -->
+    <section class="panel">
+      <div class="panel-header">
+        <h2 class="panel-title">
+          <svg width="20" height="20" style="vertical-align:middle;"><use href="#icon-joystick"/></svg>
+          Control Board
+        </h2>
+        
+        <!-- Tab Selectors -->
+        <div class="tabs-container">
+          <button class="tab-btn active" data-mode="dpad">
+            <svg width="14" height="14" style="transform: rotate(90deg);"><use href="#icon-arrow"/></svg>
+            D-Pad
+          </button>
+          <button class="tab-btn" data-mode="joystick">
+            <svg width="14" height="14"><use href="#icon-joystick"/></svg>
+            Joystick
+          </button>
+          <button class="tab-btn" data-mode="mixed">
+            <svg width="14" height="14"><use href="#icon-sliders"/></svg>
+            Mixer
+          </button>
+          <button class="tab-btn" data-mode="tilt">
+            <svg width="14" height="14"><use href="#icon-tilt"/></svg>
+            Tilt
+          </button>
+        </div>
+      </div>
+
+      <!-- VIEW 1: D-PAD VIEW -->
+      <div id="view-dpad" class="view-content active">
+        <div class="dpad-layout">
+          <button class="dpad-btn dpad-up" aria-label="Forward">
+            <svg viewBox="0 0 24 24"><use href="#icon-arrow"/></svg>
+          </button>
+          <button class="dpad-btn dpad-left" aria-label="Turn Left">
+            <svg viewBox="0 0 24 24" style="transform: rotate(-90deg);"><use href="#icon-arrow"/></svg>
+          </button>
+          <button class="dpad-btn dpad-stop" aria-label="Stop">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <rect x="6" y="6" width="12" height="12" rx="2"/>
+            </svg>
+          </button>
+          <button class="dpad-btn dpad-right" aria-label="Turn Right">
+            <svg viewBox="0 0 24 24" style="transform: rotate(90deg);"><use href="#icon-arrow"/></svg>
+          </button>
+          <button class="dpad-btn dpad-down" aria-label="Backward">
+            <svg viewBox="0 0 24 24" style="transform: rotate(180deg);"><use href="#icon-arrow"/></svg>
+          </button>
+        </div>
+        
+        <div class="keyboard-tip">
+          <span>Drive with keys:</span>
+          <span class="kbd">▲</span>
+          <span class="kbd">▼</span>
+          <span class="kbd">◀</span>
+          <span class="kbd">▶</span>
+          <span>or</span>
+          <span class="kbd">W</span><span class="kbd">A</span><span class="kbd">S</span><span class="kbd">D</span>
+          <span>(Stop: <span class="kbd">SPACE</span>)</span>
+        </div>
+      </div>
+
+      <!-- VIEW 2: ANALOG JOYSTICK VIEW -->
+      <div id="view-joystick" class="view-content">
+        <div style="display:flex; flex-direction:column; align-items:center;">
+          <div class="joystick-outer">
+            <div class="joystick-handle">
+              <div class="joystick-handle-inner"></div>
+            </div>
+          </div>
+          
+          <div class="joystick-values">
+            <div class="joystick-val-box">Steer X: <span id="joy-val-x">0</span></div>
+            <div class="joystick-val-box">Drive Y: <span id="joy-val-y">0</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 3: BUTTONS & SLIDERS VIEW -->
+      <div id="view-mixed" class="view-content">
+        <div class="mixed-controls">
+          <!-- Left side: Custom Actions -->
+          <div class="controls-group">
+            <h3>Action Switches</h3>
+            <div class="action-buttons-grid">
+              <button class="action-btn" id="btn-a">A<span>Trigger A</span></button>
+              <button class="action-btn" id="btn-b">B<span>Trigger B</span></button>
+              <button class="action-btn" id="btn-c">C<span>Trigger C</span></button>
+              <button class="action-btn" id="btn-d">D<span>Trigger D</span></button>
+            </div>
+          </div>
+          <!-- Right side: Servo Angles / Sliders -->
+          <div class="controls-group">
+            <h3>Actuators (Servo)</h3>
+            <div class="slider-container">
+              <div class="slider-label">
+                <span>Servo Angle S1</span>
+                <span id="slider-val-s1">90°</span>
+              </div>
+              <input type="range" id="slider-s1" class="custom-range" min="0" max="180" value="90">
+            </div>
+            <div class="slider-container">
+              <div class="slider-label">
+                <span>Servo Angle S2</span>
+                <span id="slider-val-s2">90°</span>
+              </div>
+              <input type="range" id="slider-s2" class="custom-range" min="0" max="180" value="90">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 4: ACCELEROMETER / TILT VIEW -->
+      <div id="view-tilt" class="view-content">
+        <div class="tilt-layout">
+          <button id="tilt-toggle" class="tilt-btn-active">
+            <svg width="16" height="16" style="vertical-align:middle;"><use href="#icon-tilt"/></svg>
+            ENABLE TILT CONTROL
+          </button>
+          
+          <div class="tilt-indicator-box">
+            <div class="tilt-grid-line"></div>
+            <div class="tilt-grid-line vertical"></div>
+            <div class="tilt-plane" id="tilt-plane"></div>
+          </div>
+          
+          <div class="joystick-values">
+            <div class="joystick-val-box">Steer (Roll): <span id="tilt-val-roll">0</span></div>
+            <div class="joystick-val-box">Speed (Pitch): <span id="tilt-val-pitch">0</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right Hand Side: Side Panel (Logs & Info) -->
+    <aside class="sidebar-container">
+      
+      <!-- Real-time Packet Terminal Log -->
+      <div class="log-panel">
+        <div class="log-header">
+          <span class="log-title">
+            <svg width="14" height="14" style="vertical-align:middle;"><use href="#icon-terminal"/></svg>
+            Packet Console
+          </span>
+          <button class="log-clear-btn" id="clear-logs">Clear</button>
+        </div>
+        <div class="log-list" id="log-list">
+          <div class="log-entry" style="color:#64748b;">[System] Console initialized. Ready to connect...</div>
+        </div>
+      </div>
+      
+      <!-- Static Quick Info Panel -->
+      <div class="help-panel">
+        <div class="help-header">
+          <svg width="14" height="14" style="vertical-align:middle;"><use href="#icon-info"/></svg>
+          Quick Protocol Reference
+        </div>
+        <div class="help-body">
+          <div class="help-section">
+            <p>Data packets are sent as UTF-8 strings terminated by a newline character (<code>\n</code>):</p>
+          </div>
+          <div class="help-section">
+            <h4>D-PAD Codes</h4>
+            <p>Sends on press: <code>UP</code>, <code>DOWN</code>, <code>LEFT</code>, <code>RIGHT</code>.<br>Sends on release: <code>up</code>, <code>down</code>, <code>left</code>, <code>right</code>.</p>
+          </div>
+          <div class="help-section">
+            <h4>Joystick & Tilt Codes</h4>
+            <p>Sends: <code>X+xx,Y+yy\n</code> (where xx, yy are signed integers <code>-90</code> to <code>90</code>, e.g. <code>X+00,Y-45</code>).</p>
+          </div>
+          <div class="help-section">
+            <h4>Action buttons & Sliders</h4>
+            <p>Buttons transmit: Press <code>A</code>, <code>B</code>, <code>C</code>, <code>D</code>; Release <code>a</code>, <code>b</code>, <code>c</code>, <code>d</code>.<br>Sliders transmit: <code>cVal\n</code> (Slider 1) or <code>xVal\n</code> (Slider 2) padded to 3 digits (e.g. <code>c090</code>, <code>x180</code>).</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- Help & Programming Instructions Modal Popup -->
+  <div class="modal" id="help-modal">
+    <div class="modal-content">
+      <button class="modal-close" id="modal-close">&times;</button>
+      <h3 class="modal-title">Setup & Programming Guide</h3>
+      <div class="modal-body" style="max-height: 70vh; overflow-y: auto; padding-right: 5px;">
+        <p>Follow these steps to connect and control your micro:bit robot using <strong>STEM Smart Labs Controller</strong>:</p>
+        
+        <ol>
+          <li>Ensure your micro:bit is powered on and Bluetooth is enabled on your computer or phone.</li>
+          <li>Flash your micro:bit with a program that listens for UART serial data over Bluetooth. See the templates below.</li>
+          <li>Click the <strong>Pair Micro:bit</strong> button in the top bar to scan and connect!</li>
+        </ol>
+        
+        <h4 style="margin-top:0.5rem; color:#fff;">MakeCode (Blocks) Programming</h4>
+        <p>In Microsoft MakeCode, configure the following block setup:</p>
+        <ol>
+          <li>Open MakeCode, click <strong>Extensions</strong>, and search/add <strong>bluetooth</strong>.</li>
+          <li>In <code>on start</code>, insert the <code>bluetooth uart service</code> block.</li>
+          <li>Create a <code>on bluetooth connected</code> block to display a checkbox.</li>
+          <li>Create a <code>on bluetooth disconnected</code> block to display a cross.</li>
+          <li>Create a <code>on rx line received</code> event block. In it, read the line value, clean it, and write conditional statements (e.g. <code>if line == "UP" then driveForward()</code> and <code>if line == "up" then stop()</code>).</li>
+        </ol>
+        
+        <h4 style="margin-top:0.5rem; color:#fff; display:flex; justify-content:space-between; align-items:center;">
+          MicroPython Programming (V2)
+          <button class="code-copy-btn" data-target="python-code">Copy Code</button>
+        </h4>
+        <div class="code-block-container">
+          <pre class="code-block" id="python-code"># Copy & flash onto micro:bit V2
+from microbit import *
+import bluetooth
+
+# Setup Bluetooth UART service
+uart = bluetooth.Uart()
+uart.start()
+
+display.show(Image.ASLEEP)
+
+while True:
+    if uart.is_connected():
+        display.show(Image.YES)
+        # Check for incoming commands
+        if uart.any():
+            data = uart.readline().decode('utf-8').strip()
+            
+            # Simple D-Pad actions
+            if data == "UP":
+                # Drive motors forward
+                pass
+            elif data == "DOWN":
+                # Drive motors backward
+                pass
+            elif data == "LEFT":
+                # Spin left
+                pass
+            elif data == "RIGHT":
+                # Spin right
+                pass
+            elif data in ["up", "down", "left", "right"]:
+                # Stop motors
+                pass
+            
+            # Action Buttons
+            elif data == "A":
+                # Button A pressed
+                pass
+            elif data == "a":
+                # Button A released
+                pass
+            
+            # Slider 1/C (parse "c180" -> 180)
+            elif data.startswith("c"):
+                try:
+                    servo_val = int(data[1:])
+                    # Set servo 1 angle to servo_val
+                except:
+                    pass
+                    
+            # Slider 2/X (parse "x180" -> 180)
+            elif data.startswith("x"):
+                try:
+                    servo_val = int(data[1:])
+                    # Set servo 2 angle to servo_val
+                except:
+                    pass
+
+            # Joystick actions (parse "X+45,Y-90")
+            elif data.startswith("X") and ",Y" in data:
+                try:
+                    parts = data.split(',')
+                    joyX = int(parts[0][1:])
+                    joyY = int(parts[1][2:])
+                    # Map joyX and joyY to motor speeds
+                except:
+                    pass
+    else:
+        display.show(Image.NO)
+        sleep(200)</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Info -->
+  <footer>
+    <span>STEM Smart Labs - Web Bluetooth Robotic Control Center</span>
+    <div class="footer-links">
+      <span>Built with Pure HTML5/CSS/JS</span>
+      <a href="https://makecode.microbit.org/" target="_blank" rel="noopener">MakeCode Editor</a>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
