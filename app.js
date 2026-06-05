@@ -205,24 +205,7 @@ function setupEventListeners() {
     if (e.target === modal) modal.classList.remove('active');
   });
 
-  // Mobile Console Toggle Overlay Setup
-  const consoleBtn = document.getElementById('btn-toggle-console');
-  const logPanel = document.querySelector('.log-panel');
-  if (consoleBtn && logPanel) {
-    const overlay = document.createElement('div');
-    overlay.className = 'console-overlay';
-    document.body.appendChild(overlay);
-    
-    consoleBtn.addEventListener('click', () => {
-      logPanel.classList.toggle('modal-active');
-      overlay.classList.toggle('active');
-    });
-    
-    overlay.addEventListener('click', () => {
-      logPanel.classList.remove('modal-active');
-      overlay.classList.remove('active');
-    });
-  }
+
 }
 
 // Switch Interface Mode

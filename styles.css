@@ -1138,49 +1138,23 @@ footer {
 
 /* Console Modal Styling for Mobile */
 @media (max-width: 1024px) {
-  /* Hide sidebar container by default on mobile/tablet */
+  /* Show sidebar container on mobile/tablet at the bottom */
   .sidebar-container {
-    display: none;
-  }
-
-  .btn-console-toggle {
-    display: inline-flex !important;
-  }
-
-  /* Make log panel behave like a popup modal when active on mobile */
-  .log-panel.modal-active {
-    display: flex !important;
-    position: fixed;
-    top: 55%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 90%;
-    max-width: 480px;
-    height: 70vh;
-    z-index: 1000;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
-    background: #e24a18;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: var(--border-radius-lg);
+    display: flex;
     flex-direction: column;
-    padding: 0.5rem;
+    width: 100%;
+    gap: 1rem;
   }
 
-  /* Darken background overlay for console log popup */
-  .console-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(4px);
-    z-index: 999;
+  /* Hide the static help reference panel on mobile to save space */
+  .help-panel {
+    display: none !important;
   }
 
-  .console-overlay.active {
-    display: block;
+  /* Make log panel compact at the bottom of the page */
+  .log-panel {
+    height: 220px;
+    padding: 1rem;
   }
 
   /* Remove 520px min-height constraints on mobile to keep controls within viewport */
@@ -1201,12 +1175,6 @@ footer {
   }
 }
 
-/* Show console button only when layout collapses, hide on desktop */
-@media (min-width: 1025px) {
-  .btn-console-toggle {
-    display: none !important;
-  }
-}
 
 /* Mobile Responsive Overrides for Screens under 768px (Portrait mobile/tab) */
 @media (max-width: 768px) {
@@ -1229,7 +1197,7 @@ footer {
   
   .connection-area {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 0.5rem;
     width: 100%;
   }
@@ -1245,7 +1213,7 @@ footer {
   }
   
   #connect-btn {
-    grid-column: span 3; /* Prominent Pair button spans full row */
+    grid-column: span 2; /* Prominent Pair button spans full row */
   }
 
   /* Control Panel Header */
