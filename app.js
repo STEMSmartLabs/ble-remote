@@ -47,7 +47,7 @@ const state = {
 };
 
 // DOM Elements
-let elConnectBtn, elStatusBadge, elStatusText, elLogList, elTiltToggle;
+let elConnectBtn, elStatusBadge, elStatusText, elLogList, elTiltToggle, elLiveMonitorValue;
 let elDpadButtons = {};
 let elJoystickOuter, elJoystickHandle, elJoystickValX, elJoystickValY;
 let elSliderS1, elSliderS2, elSliderValS1, elSliderValS2;
@@ -80,6 +80,7 @@ function initDOMElements() {
   elStatusText = document.getElementById('status-text');
   elLogList = document.getElementById('log-list');
   elTiltToggle = document.getElementById('tilt-toggle');
+  elLiveMonitorValue = document.getElementById('live-monitor-value');
 
   // Dpad buttons
   elDpadButtons.up = document.querySelector('.dpad-up');
@@ -349,6 +350,19 @@ function updateConnectionUI(connected) {
     elStatusBadge.className = 'status-badge disconnected';
     elStatusText.textContent = 'OFFLINE';
   }
+
+  // Update mobile status ticker
+  if (elLiveMonitorValue) {
+    if (connected) {
+      elLiveMonitorValue.textContent = 'CONNECTED';
+      elLiveMonitorValue.style.color = 'var(--neon-cyan)';
+      elLiveMonitorValue.style.textShadow = '0 0 5px rgba(0, 240, 255, 0.3)';
+    } else {
+      elLiveMonitorValue.textContent = 'OFFLINE';
+      elLiveMonitorValue.style.color = '#ef4444';
+      elLiveMonitorValue.style.textShadow = '0 0 5px rgba(239, 68, 68, 0.3)';
+    }
+  }
 }
 
 // Receive feedback from Micro:bit
@@ -449,6 +463,21 @@ function addLog(message) {
   }
 
   elLogList.scrollTop = elLogList.scrollHeight;
+
+  // Update live activity monitor ticker values
+  if (elLiveMonitorValue) {
+    if (message.startsWith('[TX]')) {
+      const cleanMsg = message.replace('[TX] ', '').replace('\\n', '').trim();
+      elLiveMonitorValue.textContent = `TX: ${cleanMsg}`;
+      elLiveMonitorValue.style.color = 'var(--neon-orange)';
+      elLiveMonitorValue.style.textShadow = '0 0 5px rgba(255, 107, 53, 0.3)';
+    } else if (message.startsWith('[RX]')) {
+      const cleanMsg = message.replace('[RX] ', '').trim();
+      elLiveMonitorValue.textContent = `RX: ${cleanMsg}`;
+      elLiveMonitorValue.style.color = 'var(--neon-cyan)';
+      elLiveMonitorValue.style.textShadow = '0 0 5px rgba(0, 240, 255, 0.3)';
+    }
+  }
 }
 
 /* ==========================================

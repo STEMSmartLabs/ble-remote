@@ -275,6 +275,37 @@ header {
   min-height: 520px;
 }
 
+.live-monitor-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: auto;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.25);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
+  margin-left: -1.5rem;
+  margin-right: -1.5rem;
+  margin-bottom: -1.5rem;
+  text-transform: uppercase;
+}
+
+.monitor-title {
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.monitor-value {
+  color: var(--neon-cyan);
+  font-weight: 700;
+  text-shadow: 0 0 5px rgba(0, 240, 255, 0.3);
+}
+
 .panel-header {
   display: flex;
   justify-content: space-between;
@@ -1136,25 +1167,11 @@ footer {
   color: #d35400;
 }
 
-/* Console Modal Styling for Mobile */
+/* Hide Sidebar Console & Enable Bottom Activity Monitor Ticker on Mobile */
 @media (max-width: 1024px) {
-  /* Show sidebar container on mobile/tablet at the bottom */
+  /* Hide sidebar completely on mobile/tablet to avoid vertical clutter */
   .sidebar-container {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    gap: 1rem;
-  }
-
-  /* Hide the static help reference panel on mobile to save space */
-  .help-panel {
     display: none !important;
-  }
-
-  /* Make log panel compact at the bottom of the page */
-  .log-panel {
-    height: 220px;
-    padding: 1rem;
   }
 
   /* Remove 520px min-height constraints on mobile to keep controls within viewport */
@@ -1172,6 +1189,14 @@ footer {
   .view-content {
     min-height: auto;
     padding: 1rem 0;
+  }
+
+  /* Adjust negative margins of live monitor bar to match 1rem mobile panel padding */
+  .live-monitor-bar {
+    margin-left: -1rem;
+    margin-right: -1rem;
+    margin-bottom: -1rem;
+    border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
   }
 }
 
