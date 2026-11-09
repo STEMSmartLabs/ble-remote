@@ -64,6 +64,7 @@ The web app transmits UTF-8 encoded text commands terminated by a newline charac
 | `DOWN\n` | D-Pad / Emulated | Press Backward | `DOWN\n` |
 | `LEFT\n` | D-Pad / Emulated | Press Left | `LEFT\n` |
 | `RIGHT\n` | D-Pad / Emulated | Press Right | `RIGHT\n` |
+| `SHAKE\n` | D-Pad (Wiggle) | One-shot request to shake head and wag tail | `SHAKE\n` |
 | `up\n`, `down\n`, `left\n`, `right\n` | D-Pad / Emulated | Release Direction (Stop) | `up\n` |
 | `X+xx,Y+yy\n` | Joystick / Tilt | Signed, 2-digit padded coordinates (clamped `-90` to `90`) | `X+00,Y-45\n` |
 | `A\n`, `B\n`, `C\n`, `D\n` | Mixer | Button Pressed | `A\n` |
@@ -112,6 +113,11 @@ while True:
                 # Stop motors
                 pass
                 
+            # Wiggle: trigger head/tail servo animation on the receiver
+            elif data == "SHAKE":
+                # Replace with your servo animation function (head shake + tail wag)
+                pass
+
             # 2. Action Buttons
             elif data == "A":
                 # Button A pressed
