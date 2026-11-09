@@ -146,6 +146,7 @@ function setupEventListeners() {
 
   // Dpad Actions
   setupDpadActions();
+  setupWiggleAction();
 
   // Keyboard Bindings
   setupKeyboardActions();
@@ -524,6 +525,16 @@ function setupDpadActions() {
       btn.classList.remove('active');
       if (key !== 'stop') transmitImmediate(releaseCmd);
     });
+  });
+}
+
+// Wiggle is a one-shot action: a click/tap sends one SHAKE command.
+// Do not send a release command, which could interfere with movement.
+function setupWiggleAction() {
+  const button = document.getElementById('btn-wiggle');
+  if (!button) return;
+  button.addEventListener('click', () => {
+    transmitImmediate('SHAKE\n');
   });
 }
 

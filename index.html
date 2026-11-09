@@ -132,6 +132,7 @@
 
       <!-- VIEW 1: D-PAD VIEW -->
       <div id="view-dpad" class="view-content active">
+        <div class="dpad-control-stack">
         <div class="dpad-layout">
           <button class="dpad-btn dpad-up" aria-label="Forward">
             <svg viewBox="0 0 24 24"><use href="#icon-arrow"/></svg>
@@ -150,6 +151,8 @@
           <button class="dpad-btn dpad-down" aria-label="Backward">
             <svg viewBox="0 0 24 24" style="transform: rotate(180deg);"><use href="#icon-arrow"/></svg>
           </button>
+        </div>
+        <button type="button" id="btn-wiggle" class="wiggle-btn" aria-label="Wiggle: shake head and wag tail" title="Shake head and wag tail">🐾 Wiggle</button>
         </div>
         
         <div class="keyboard-tip">
@@ -269,8 +272,8 @@
             <p>Data packets are sent as UTF-8 strings terminated by a newline character (<code>\n</code>):</p>
           </div>
           <div class="help-section">
-            <h4>D-PAD Codes</h4>
-            <p>Sends on press: <code>UP</code>, <code>DOWN</code>, <code>LEFT</code>, <code>RIGHT</code>.<br>Sends on release: <code>up</code>, <code>down</code>, <code>left</code>, <code>right</code>.</p>
+            <h4>D-PAD &amp; Wiggle Codes</h4>
+            <p>Sends on press: <code>UP</code>, <code>DOWN</code>, <code>LEFT</code>, <code>RIGHT</code>.<br>Sends on release: <code>up</code>, <code>down</code>, <code>left</code>, <code>right</code>.<br>Wiggle sends <code>SHAKE\n</code> once per tap to trigger head and tail servos.</p>
           </div>
           <div class="help-section">
             <h4>Joystick & Tilt Codes</h4>
@@ -348,6 +351,11 @@ while True:
                 # Stop motors
                 pass
             
+            # Wiggle: trigger the receiver's head-shake and tail-wag sequence
+            elif data == "SHAKE":
+                # Call your receiver's servo animation here
+                pass
+
             # Action Buttons
             elif data == "A":
                 # Button A pressed

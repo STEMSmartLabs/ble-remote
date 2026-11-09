@@ -382,6 +382,40 @@ header {
 }
 
 /* 1. D-PAD View Layout */
+.dpad-control-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.wiggle-btn {
+  border: 2px solid rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.13);
+  color: #ffffff;
+  border-radius: 999px;
+  padding: 0.7rem 1.8rem;
+  font: inherit;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  min-height: 44px;
+  touch-action: manipulation;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.wiggle-btn:hover, .wiggle-btn:focus-visible {
+  background: rgba(255, 255, 255, 0.25);
+  outline-offset: 4px;
+}
+
+.wiggle-btn:active { transform: scale(0.96); }
+
+@media (max-height: 600px) {
+  .dpad-control-stack { gap: 0.45rem; }
+  .wiggle-btn { padding: 0.4rem 1.4rem; }
+}
+
 .dpad-layout {
   display: grid;
   grid-template-columns: repeat(3, 90px);
